@@ -1,24 +1,24 @@
-!DOCTYPE html
-html lang=es
-head
-    meta charset=UTF-8
-    titleChatbot Sencillotitle
-    style
-        body { font-family Arial, sans-serif; padding 20px; }
-        #chatLog { border 1px solid #ccc; padding 10px; height 300px; overflow-y auto; }
-        .user { text-align right; color blue; }
-        .bot { text-align left; color green; }
-        #message { width 80%; padding 10px; margin-top 10px; }
-        #sendBtn { padding 10px; margin-left 10px; }
-    style
-head
-body
-    h1Chatbot Sencilloh1
-    div id=chatLogdiv
-    input type=text id=message placeholder=Escribe tu mensaje...
-    button id=sendBtnEnviarbutton
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Chatbot Sencillo</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        #chatLog { border: 1px solid #ccc; padding: 10px; height: 300px; overflow-y: auto; }
+        .user { text-align: right; color: blue; }
+        .bot { text-align: left; color: green; }
+        #message { width: 80%; padding: 10px; margin-top: 10px; }
+        #sendBtn { padding: 10px; margin-left: 10px; }
+    </style>
+</head>
+<body>
+    <h1>Chatbot Sencillo</h1>
+    <div id="chatLog"></div>
+    <input type="text" id="message" placeholder="Escribe tu mensaje...">
+    <button id="sendBtn">Enviar</button>
 
-    script
+    <script>
         const messageInput = document.getElementById('message');
         const sendBtn = document.getElementById('sendBtn');
         const chatLog = document.getElementById('chatLog');
@@ -26,7 +26,7 @@ body
         function appendMessage(sender, message) {
             const messageElement = document.createElement('div');
             messageElement.className = sender;
-            messageElement.innerHTML = `pstrong${sender === 'user'  'Tú'  'Bot'}strong ${message}p`;
+            messageElement.innerHTML = `<p><strong>${sender === 'user' ? 'Tú' : 'Bot'}:</strong> ${message}</p>`;
             chatLog.appendChild(messageElement);
             chatLog.scrollTop = chatLog.scrollHeight;
         }
@@ -38,21 +38,21 @@ body
             appendMessage('user', message);
             messageInput.value = '';
 
-            const response = await fetch('chat', {
-                method 'POST',
-                headers { 'Content-Type' 'applicationjson' },
-                body JSON.stringify({ message })
+            const response = await fetch('/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message })
             });
             const data = await response.json();
             appendMessage('bot', data.reply);
 
             if (data.reply.includes('No conozco esa respuesta')) {
-                const newAnswer = prompt('Por favor, enséñame cómo debería responder');
+                const newAnswer = prompt('Por favor, enséñame cómo debería responder:');
                 if (newAnswer && newAnswer.trim() !== '') {
-                    await fetch('learn', {
-                        method 'POST',
-                        headers { 'Content-Type' 'applicationjson' },
-                        body JSON.stringify({ question message, answer newAnswer })
+                    await fetch('/learn', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ question: message, answer: newAnswer })
                     });
                     alert('¡Gracias, he aprendido una nueva respuesta!');
                 }
@@ -65,6 +65,6 @@ body
                 sendMessage();
             }
         });
-    script
-body
-html
+    </script>
+</body>
+</html>
