@@ -232,6 +232,13 @@ def mostrar_adivinanza():
 # Configuración inicial del juego
 juego = ClueJuego()
 
+# Mostrar solución del caso actual
+print("Solución del caso actual:")
+print(f"Culpable: {juego.historia_actual['culpable']}")
+print(f"Lugar del asesinato: {juego.historia_actual['lugar']}")
+print(f"Arma utilizada: {juego.historia_actual['arma']}")
+
+
 # Crear la ventana principal
 ventana = tk.Tk()
 ventana.geometry("800x600") 
