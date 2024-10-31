@@ -143,7 +143,7 @@ class ClueJuego:
         ]
 
         self.historia_actual = random.choice(self.historias)
-        self.pistas_restantes = 5
+        self.pistas_restantes = 3
 
 
     def obtener_pista(self, tipo, seleccion):
