@@ -10,12 +10,14 @@ class Animal:
         self.caracteristicas = caracteristicas
 
 class JuegoAdivinaQuien:
-    def __init__(self, db_name="animales.db"):
+    def __init__(self, db_name="animales.db", min_preguntas=3):
         self.conn = sqlite3.connect(db_name)
         self.cursor = self.conn.cursor()
         self.personajes = self.cargar_personajes()
         self.caracteristicas_preguntadas = set()
         self.pregunta_actual = None
+        self.min_preguntas = min_preguntas  # Mínimo número de preguntas antes de adivinar
+        self.preguntas_hechas = 0
 
     def cargar_personajes(self):
         """ Carga los personajes y sus características desde la base de datos """
@@ -35,18 +37,19 @@ class JuegoAdivinaQuien:
             return []
 
     def hacer_pregunta(self):
-        """ Genera una pregunta basada en las características aún no preguntadas """
+        """Genera una pregunta basada en las características aún no preguntadas"""
         if not self.personajes:
             return None
 
         posibles_caracteristicas = {car for personaje in self.personajes for car in personaje.caracteristicas}
         caracteristicas_disponibles = list(posibles_caracteristicas - self.caracteristicas_preguntadas)
-        
+
         if not caracteristicas_disponibles:
             return None
 
         self.pregunta_actual = random.choice(caracteristicas_disponibles)
         self.caracteristicas_preguntadas.add(self.pregunta_actual)
+        self.preguntas_hechas += 1
         return self.pregunta_actual
 
     def filtrar_personajes(self, respuesta):
@@ -58,8 +61,8 @@ class JuegoAdivinaQuien:
                 self.personajes = [p for p in self.personajes if self.pregunta_actual not in p.caracteristicas]
 
     def adivinar_personaje(self):
-        """ Intenta adivinar el personaje """
-        if len(self.personajes) == 1:
+        """Intenta adivinar el personaje, solo si se ha llegado al mínimo de preguntas"""
+        if len(self.personajes) == 1 and self.preguntas_hechas >= self.min_preguntas:
             return self.personajes[0].nombre
         return None
 
@@ -80,7 +83,7 @@ class InterfazJuego:
         self.juego = JuegoAdivinaQuien()
         self.root = root
         self.root.title("Adivina Quién - Animales")
-        self.root.geometry("400x300")
+        self.root.resizable(True, True)
         self.root.configure(bg='#f0f8ff')
 
         self.frame = tk.Frame(root, bg='#f0f8ff')
